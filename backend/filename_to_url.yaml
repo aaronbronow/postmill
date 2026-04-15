@@ -1,0 +1,14 @@
+summary: Filename to URL
+description: ''
+type: inline
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    filename:
+      type: string
+      description: ''
+      default: null
+      originalType: string
+  required:
+    - filename

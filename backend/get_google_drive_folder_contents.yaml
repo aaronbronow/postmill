@@ -1,0 +1,25 @@
+summary: Get Google Drive Folder Contents
+description: ''
+concurrency_time_window_s: 0
+type: inline
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  order:
+    - key
+    - f
+    - g
+  properties:
+    folder_url:
+      type: string
+      description: ''
+      default: null
+      originalType: string
+    key:
+      type: string
+      description: ''
+      default: null
+      originalType: string
+  required:
+    - key
+    - folder_url

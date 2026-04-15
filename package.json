@@ -1,0 +1,6 @@
+{
+    "dependencies": {
+        "svelte": "5.45.2",
+        "windmill-client": "^1"
+    }
+}
