@@ -1,0 +1,10 @@
+description: ''
+value:
+  dbname: prod
+  host: ''
+  password: $var:f/public/inspiring_postgresql
+  region: ''
+  root_certificate_pem: ''
+  use_iam_auth: false
+  user: postmill
+resource_type: postgresql

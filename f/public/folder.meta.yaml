@@ -1,0 +1,7 @@
+summary: folder for live web apps
+display_name: public
+default_permissioned_as: []
+extra_perms:
+  u/aaron: true
+owners:
+  - u/aaron

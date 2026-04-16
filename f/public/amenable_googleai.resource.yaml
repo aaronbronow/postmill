@@ -1,0 +1,6 @@
+description: ''
+value:
+  api_key: $var:f/public/amenable_googleai
+  base_url: ''
+  platform: standard
+resource_type: googleai
