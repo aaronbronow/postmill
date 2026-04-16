@@ -61,6 +61,18 @@ If `wmill sync push` reports `Done (0ms)` but changes (like script deletions) ar
 If you encounter `TypeError: Iterator value undefined is not an entry object` during a push, it usually indicates stale or missing metadata for a backend script. 
 **Fix:** Run `wmill generate-metadata f/public/postmill__raw_app` to regenerate locks and schemas.
 
+### Handling Binary Data in Backend Scripts
+When using `wmill.writeS3File` (or similar S3 functions) in a backend script to save binary data (like an image):
+- **Avoid** passing a raw Node.js/Bun `Buffer`. Windmill may stringify it into a JSON object (e.g., `{"type":"Buffer","data":[...]}`).
+- **Fix:** Convert the `Buffer` or `Uint8Array` into a `Blob` before passing it to the function.
+
+```typescript
+// Correct way to save binary data
+const buffer = Buffer.from(base64Content, 'base64');
+const blob = new Blob([buffer]);
+await wmill.writeS3File({ s3: 'filename.jpg' }, blob, bucketPath);
+```
+
 ### Project Linking
 When linking a local directory to a remote app, ensure the code is placed within the correct folder structure (e.g., `f/public/<app_name>__raw_app`). The Windmill CLI tracks apps based on these path conventions defined in `wmill.yaml`.
 

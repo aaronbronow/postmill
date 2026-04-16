@@ -2,10 +2,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
-<!-- v1.0.5 -->
+<!-- v1.0.9 -->
 <script lang="ts">
   import { backend } from './wmill';
   import { onMount } from 'svelte';
+  import * as wmill from 'windmill-client';
 
   let activeTab = $state('Upload');
   let name = $state('Post Photo App');
@@ -14,6 +15,7 @@
   let filesToUpload = $state<FileList | null>(null);
   let uploadStatus = $state('');
   let isUploading = $state(false);
+  let isDragging = $state(false);
 
   // Draft Tab State
   let drafts = $state<any[]>([]);
@@ -48,19 +50,62 @@
     }
   }
 
+  function handleDragOver(e: DragEvent) {
+    e.preventDefault();
+    isDragging = true;
+  }
+
+  function handleDragLeave() {
+    isDragging = false;
+  }
+
+  function handleDrop(e: DragEvent) {
+    e.preventDefault();
+    isDragging = false;
+    if (e.dataTransfer?.files) {
+      filesToUpload = e.dataTransfer.files;
+    }
+  }
+
+  // Utility to convert File to base64
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Strip the "data:image/jpeg;base64," prefix
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = error => reject(error);
+    });
+  }
+
   async function createDraft() {
     if (!filesToUpload || filesToUpload.length === 0) return;
 
     isUploading = true;
-    uploadStatus = 'Uploading and creating draft...';
+    uploadStatus = 'Preparing images...';
     try {
-      // In a real Svelte full-code app on Windmill, we would need to upload the files to S3.
-      // For now, we'll simulate it by sending the names, as the backend save_drafts expects strings.
-      const filenames = Array.from(filesToUpload).map(f => f.name);
-      
+      const imageData = [];
+
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i];
+        uploadStatus = `Reading file ${i + 1}/${filesToUpload.length}: ${file.name}...`;
+        
+        const base64Content = await fileToBase64(file);
+        
+        imageData.push({
+          name: file.name,
+          content: base64Content
+        });
+      }
+
+      uploadStatus = 'Sending to backend for S3 upload and manifest update...';
       const result = await backend.save_drafts({
         filename: 'postmill.json',
-        images: filenames
+        images: imageData
       });
       
       console.log('Draft created:', result);
@@ -75,9 +120,9 @@
       if (drafts.length > 0) {
         selectedDraft = drafts[drafts.length - 1];
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error creating draft:', e);
-      uploadStatus = 'Error: ' + e.message;
+      uploadStatus = 'Error: ' + (e.message || e);
     } finally {
       isUploading = false;
     }
@@ -128,19 +173,24 @@
   <section class="content">
     {#if activeTab === 'Upload'}
       <div class="upload-area">
-        <div class="card p-8 border-dashed border-2 text-center">
+        <div 
+          class="card p-8 border-dashed border-2 text-center transition-colors {isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}"
+          on:dragover={handleDragOver}
+          on:dragleave={handleDragLeave}
+          on:drop={handleDrop}
+        >
           <input type="file" multiple on:change={handleFileUpload} id="file-input" class="hidden" />
-          <label for="file-input" class="cursor-pointer">
+          <label for="file-input" class="cursor-pointer block w-full h-full">
             <div class="py-4">
               {#if filesToUpload && filesToUpload.length > 0}
                 <p class="font-bold">{filesToUpload.length} files selected</p>
-                <ul class="text-sm mt-2">
+                <ul class="text-sm mt-2 list-none p-0">
                   {#each Array.from(filesToUpload) as file}
                     <li>{file.name}</li>
                   {/each}
                 </ul>
               {:else}
-                <p>Drag and drop files or click to select them</p>
+                <p class="text-gray-500">Drag and drop files or click to select them</p>
               {/if}
             </div>
           </label>
