@@ -2,7 +2,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
-<!-- v1.0.9 -->
+<!-- v1.1.0 -->
 <script lang="ts">
   import { backend } from './wmill';
   import { onMount } from 'svelte';
@@ -22,6 +22,7 @@
   let selectedDraft = $state<any>(null);
   let description = $state('');
   let isLoadingDrafts = $state(false);
+  let isDeleting = $state(false);
 
   // Post Tab State
   let selectedAccounts = $state<string[]>([]);
@@ -125,6 +126,31 @@
       uploadStatus = 'Error: ' + (e.message || e);
     } finally {
       isUploading = false;
+    }
+  }
+
+  async function deleteDraft() {
+    if (!selectedDraft) return;
+    if (!confirm('Are you sure you want to delete this draft and all its images?')) return;
+
+    isDeleting = true;
+    try {
+      const result = await backend.delete_draft({
+        filename: 'postmill.json',
+        draftId: selectedDraft.id
+      });
+      
+      if (result.status === 'Draft deleted') {
+        selectedDraft = null;
+        await loadDrafts();
+      } else {
+        alert('Error deleting draft: ' + result.message);
+      }
+    } catch (e: any) {
+      console.error('Error deleting draft:', e);
+      alert('Error: ' + e.message);
+    } finally {
+      isDeleting = false;
     }
   }
 
@@ -236,6 +262,17 @@
 
           <div class="draft-main">
             {#if selectedDraft}
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="m-0">Draft Details</h3>
+                <button 
+                  class="btn btn-danger btn-sm" 
+                  on:click={deleteDraft}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete Draft'}
+                </button>
+              </div>
+
               <div class="image-grid">
                 {#each selectedDraft.images as img}
                   <div class="image-card">
@@ -285,3 +322,19 @@
     {/if}
   </section>
 </main>
+
+<style>
+  :global(.btn-danger) {
+    background-color: #ef4444;
+    color: white;
+  }
+  :global(.btn-danger:hover) {
+    background-color: #dc2626;
+  }
+  :global(.btn-danger:disabled) {
+    background-color: #fca5a5;
+    cursor: not-allowed;
+  }
+  .m-0 { margin: 0; }
+  .mb-4 { margin-bottom: 1rem; }
+</style>
