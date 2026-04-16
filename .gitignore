@@ -47,6 +47,11 @@ Thumbs.db
 .gemini
 .claude/
 
+# --- Local Testing ---
+test_images/
+*-manifest.json
+*-cleanup.json
+
 # --- Environment ---
 .env
 .env.*
