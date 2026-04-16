@@ -2,7 +2,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
-<!-- v1.1.0 -->
+<!-- v1.2.0 -->
 <script lang="ts">
   import { backend } from './wmill';
   import { onMount } from 'svelte';
@@ -27,6 +27,8 @@
   // Post Tab State
   let selectedAccounts = $state<string[]>([]);
   const availableAccounts = ['Instagram', 'Threads', 'Facebook'];
+  let isPosting = $state(false);
+  let postStatus = $state('');
 
   onMount(async () => {
     await loadDrafts();
@@ -151,6 +153,38 @@
       alert('Error: ' + e.message);
     } finally {
       isDeleting = false;
+    }
+  }
+
+  async function postToAccounts() {
+    if (!selectedDraft || selectedAccounts.length === 0) return;
+
+    isPosting = true;
+    postStatus = 'Initiating posts...';
+    
+    try {
+      for (const account of selectedAccounts) {
+        postStatus = `Posting to ${account}...`;
+        if (account === 'Threads') {
+          const result = await backend.post_to_threads({
+            filename: 'postmill.json',
+            draftId: selectedDraft.id
+          });
+          if (result.status === 'Success') {
+            postStatus = `Successfully posted to Threads! ID: ${result.thread_id}`;
+          } else {
+            postStatus = `Error posting to Threads: ${result.message}`;
+            break;
+          }
+        } else {
+          postStatus = `${account} integration not implemented yet. Skipping.`;
+        }
+      }
+    } catch (e: any) {
+      console.error('Error during posting:', e);
+      postStatus = 'Error: ' + (e.message || e);
+    } finally {
+      isPosting = false;
     }
   }
 
@@ -312,10 +346,18 @@
             {/each}
           </div>
           
-          <div class="mt-8">
-            <button class="btn btn-primary w-full" disabled={selectedAccounts.length === 0 || !selectedDraft}>
-              Post to Selected Accounts
+          <div class="mt-8 text-center">
+            <button 
+              class="btn btn-primary w-full" 
+              disabled={selectedAccounts.length === 0 || !selectedDraft || isPosting}
+              on:click={postToAccounts}
+            >
+              {isPosting ? 'Posting...' : 'Post to Selected Accounts'}
             </button>
+            
+            {#if postStatus}
+              <p class="mt-4 text-sm font-medium text-blue-600">{postStatus}</p>
+            {/if}
           </div>
         </div>
       {/if}

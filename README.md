@@ -27,6 +27,16 @@ This test will:
 3. Verify the images and draft entry exist.
 4. Clean up by removing the test data from both S3 and the manifest.
 
+### Running Threads Posting Tests
+
+To verify the Threads integration:
+1. Ensure you have set `THREADS_USER_ID` and `THREADS_ACCESS_TOKEN` in your `.env` file.
+2. The token must be a Threads-specific token (starting with `TH...`).
+3. Run the Threads test script:
+   ```bash
+   bun run test_threads_post.ts
+   ```
+
 ### Test Images
 
 Sample images for testing are stored in the `test_images/` directory (ignored by git).

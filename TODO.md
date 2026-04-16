@@ -1,5 +1,5 @@
 # TODO
-- [ ] write readme
+- [x] write readme
 
 ## Windmill UI
 - [ ] req: an alert popup 
@@ -7,7 +7,7 @@
 - [ ] req: saving the description updates the draft
 - [x] req: Master-Detail view for drafts (Table for selection, List for images)
 - [x] req: port write file method into bg to create or read windmill.json (Implemented via saveDrafts/loadDrafts)
-- [ ] req: save post platform and account to draft file
+- [x] req: save post platform and account to draft file
 - [x] req: delete draft
 - [x] upload multiple files
 - [x] make a second tab in the flow
@@ -19,6 +19,12 @@
 - [ ] drag images to re-order
 - [ ] delete the images and start over
 - [ ] json encode description 
+
+## Threads Integration
+- [x] Implement Threads posting backend script
+- [x] Configure Threads API credentials (User ID and Access Token)
+- [x] Verify Threads token format (starts with `TH`)
+- [x] Add integration test for Threads posting (`test_threads_post.ts`)
 
 ## AWS client
 - [x] req: adding images uploades to aws and adds them to the current draft (Implemented via Create Draft button)

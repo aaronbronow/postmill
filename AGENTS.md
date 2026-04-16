@@ -73,6 +73,13 @@ const blob = new Blob([buffer]);
 await wmill.writeS3File({ s3: 'filename.jpg' }, blob, bucketPath);
 ```
 
+### Handling Threads API Authentication
+When configuring Threads integration, ensure you use a **Threads-specific User Access Token**:
+- **Format**: Tokens must start with `TH...`. Standard Meta/Facebook tokens (starting with `EA...`) will fail with "Invalid OAuth access token" when calling `graph.threads.net`.
+- **Generation**: Use the **Threads -> User Token Generator** in the Meta Developer Portal after adding the "Threads" product to your app and yourself as a Threads Tester.
+- **Variables**: Set `u/aaron/THREADS_USER_ID` and `u/aaron/THREADS_ACCESS_TOKEN` in Windmill (or `.env` for local tests).
+- **Debugging**: If a token fails, verify it using the [Meta Access Token Debugger](https://developers.facebook.com/tools/debug/accesstoken/) and ensure the "Threads" product is selected.
+
 ### Project Linking
 When linking a local directory to a remote app, ensure the code is placed within the correct folder structure (e.g., `f/public/<app_name>__raw_app`). The Windmill CLI tracks apps based on these path conventions defined in `wmill.yaml`.
 
