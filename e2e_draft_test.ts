@@ -1,7 +1,7 @@
 import { $ } from "bun";
 import { readFileSync, writeFileSync, unlinkSync } from "fs";
 
-const BUCKET_NAME = "bronownet-post-photos";
+const BUCKET_NAME = process.env.S3_BUCKET_NAME || "your-s3-bucket-name";
 const MANIFEST_FILE = "postmill.json";
 const TEST_IMAGE_DIR = "test_images";
 

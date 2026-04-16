@@ -7,15 +7,19 @@ Postmill is a draft management application for social media posts, built with Sv
 ### Prerequisites
 
 - [Bun](https://bun.sh/)
-- [AWS CLI](https://aws.amazon.com/cli/) (authenticated with access to the `bronownet-post-photos` bucket)
+- [AWS CLI](https://aws.amazon.com/cli/) (authenticated with access to your own S3 bucket)
+- **S3 Bucket**: You must have an S3 bucket and configured the AWS CLI with access to it.
+- **Windmill Resources**: In Windmill, ensure you have an S3 resource pointing to your bucket.
 
 ### Running End-to-End Tests
 
-To verify the draft creation and deletion flow, run the integration test script:
+To verify the draft creation and deletion flow, run the integration test script. You can set your bucket name via the `S3_BUCKET_NAME` environment variable:
 
 ```bash
-bun run e2e_draft_test.ts
+S3_BUCKET_NAME=your-s3-bucket-name bun run e2e_draft_test.ts
 ```
+
+Alternatively, you can manually update the `BUCKET_NAME` constant in `e2e_draft_test.ts`.
 
 This test will:
 1. Upload local test images to S3.
