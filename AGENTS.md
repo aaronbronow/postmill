@@ -51,4 +51,18 @@ const rows = await sql`SELECT * FROM table WHERE id = ${id}`.fetch();
 **SQL migrations:** Add `.sql` files to `sql_to_apply/`, run `wmill app dev`, then whitelist tables
 
 ---
+
+## Development Tips & Troubleshooting
+
+### Forcing a Remote Sync
+If `wmill sync push` reports `Done (0ms)` but changes (like script deletions) aren't reflected in the Cloud UI, **touch or modify `App.svelte`** (e.g., update a version comment). This forces the CLI to rebuild the app bundle and re-evaluate the backend runnables.
+
+### Fixing "Iterator value undefined" Error
+If you encounter `TypeError: Iterator value undefined is not an entry object` during a push, it usually indicates stale or missing metadata for a backend script. 
+**Fix:** Run `wmill generate-metadata f/public/postmill__raw_app` to regenerate locks and schemas.
+
+### Project Linking
+When linking a local directory to a remote app, ensure the code is placed within the correct folder structure (e.g., `f/public/<app_name>__raw_app`). The Windmill CLI tracks apps based on these path conventions defined in `wmill.yaml`.
+
+---
 *Run `wmill app generate-agents` to refresh. See `.claude/skills/raw-app` skill for full documentation.*
