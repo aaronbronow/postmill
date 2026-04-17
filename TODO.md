@@ -3,20 +3,22 @@
 
 ## Windmill UI
 - [ ] req: an alert popup 
-- [ ] req: sorting the images updates the drafts file
-- [ ] req: saving the description updates the draft
+- [x] req: sorting the images updates the drafts file (Implemented via svelte-dnd-action and save_drafts)
+- [x] req: saving the description updates the draft (Implemented via debounced save_drafts call)
 - [x] req: Master-Detail view for drafts (Table for selection, List for images)
 - [x] req: port write file method into bg to create or read windmill.json (Implemented via saveDrafts/loadDrafts)
 - [x] req: save post platform and account to draft file
 - [x] req: delete draft
 - [x] upload multiple files
+- [x] input validation for images (Size, Format, Aspect Ratio)
+- [x] fix Payload Too Large error by using S3 Presigned URLs (Direct binary upload)
 - [x] make a second tab in the flow
 - [x] list of accounts to post to
 - [x] how to use app context?
 - [x] how to set environment variables once (Configured in .env and AGENTS.md)
 - [ ] set app state properties
 - [x] clean up dev UI into a single column
-- [ ] drag images to re-order
+- [x] drag images to re-order (Implemented via svelte-dnd-action)
 - [ ] delete the images and start over
 - [ ] json encode description 
 
@@ -25,6 +27,7 @@
 - [x] Configure Threads API credentials (User ID and Access Token)
 - [x] Verify Threads token format (starts with `TH`)
 - [x] Add integration test for Threads posting (`test_threads_post.ts`)
+- [ ] Set up dedicated private Threads test account and add as a Threads Tester (refer to THREADS_TESTING.md)
 
 ## AWS client
 - [x] req: adding images uploades to aws and adds them to the current draft (Implemented via Create Draft button)

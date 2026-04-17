@@ -1,24 +1,17 @@
 import * as wmill from 'windmill-client';
 import { S3Object } from 'windmill-client';
 
-export async function main(filename: string, images: { name: string, content: string }[]) {
+export async function main(
+  filename: string, 
+  draftId?: number, 
+  description?: string,
+  imageUrls?: string[], // URLs of already uploaded images
+  reorderedImages?: { url: string }[] // For reordering existing draft images
+) {
   const bucketPath = 'u/aaron/post-photos-app-bucket-dev';
-  const bucketResource = await wmill.getResource(bucketPath);
   const s3_file: S3Object = { s3: filename };
 
-  // 1. Upload images to S3
-  if (images && images.length > 0) {
-    for (const img of images) {
-      // Use Buffer for reliable base64 decoding in Bun/Node
-      const buffer = Buffer.from(img.content, 'base64');
-      // Convert to Blob to ensure binary treatment by writeS3File
-      const blob = new Blob([buffer]);
-      
-      await wmill.writeS3File({ s3: img.name }, blob, bucketPath);
-    }
-  }
-
-  // 2. Update manifest
+  // 1. Load manifest
   let current_content = { status: 'ok', drafts: [] as any[] };
 
   try {
@@ -30,18 +23,48 @@ export async function main(filename: string, images: { name: string, content: st
     console.log("File not found, starting fresh.");
   }
 
-  if (images && images.length > 0) {
+  // 2. Update or Create Draft
+  if (draftId) {
+    // Update existing draft
+    const index = current_content.drafts.findIndex((d: any) => d.id === draftId);
+    if (index !== -1) {
+      const draft = current_content.drafts[index];
+      
+      if (description !== undefined) {
+        draft.description = description;
+      }
+      
+      if (reorderedImages) {
+        // Handle reordering
+        draft.images = reorderedImages;
+      }
+      
+      if (imageUrls && imageUrls.length > 0) {
+        // Append new images
+        draft.images = [...(draft.images || []), ...imageUrls.map(url => ({ url }))];
+      }
+      
+      draft.updated_at = new Date().toISOString();
+    } else {
+      return { status: 'Error', message: 'Draft not found' };
+    }
+  } else if (imageUrls && imageUrls.length > 0) {
+    // Create new draft
     const new_draft = {
       id: Date.now(),
-      images: images.map(img => ({
-        url: `https://${bucketResource.bucket}.${bucketResource.endPoint}/${img.name}`
-      })),
-      created_at: new Date().toISOString()
+      images: imageUrls.map(url => ({ url })),
+      description: description || "",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
     current_content.drafts.push(new_draft);
+  } else {
+    return { status: 'Error', message: 'No images or draft ID provided' };
   }
 
+  // 3. Save manifest
   await wmill.writeS3File(s3_file, JSON.stringify(current_content), bucketPath);
   
-  return { status: 'Draft saved', draft_id: current_content.drafts.slice(-1)[0]?.id };
+  const saved_draft_id = draftId || current_content.drafts.slice(-1)[0]?.id;
+  return { status: 'Draft saved', draft_id: saved_draft_id };
 }
