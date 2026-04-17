@@ -20,6 +20,9 @@
 - [x] clean up dev UI into a single column
 - [x] fix layout/style flicker by disabling Tailwind Preflight and adding immediate layout utilities to index.css
 - [x] drag images to re-order (Implemented via svelte-dnd-action)
+- [x] fix Svelte deprecation warnings and accessibility issues
+- [x] migrate to Tailwind CLI for production builds to fix Windmill app linting
+- [x] remove backend test scripts and manually update wmill.d.ts
 - [ ] delete the images and start over
 - [ ] json encode description 
 
