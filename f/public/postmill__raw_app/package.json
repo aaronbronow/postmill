@@ -1,9 +1,17 @@
 {
+    "scripts": {
+        "build:css": "../../../node_modules/.bin/tailwindcss -i ./index.css -o ./dist/tailwind.css"
+    },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1031.0",
         "@aws-sdk/s3-request-presigner": "^3.1031.0",
         "svelte": "5.45.2",
         "svelte-dnd-action": "^0.9.69",
         "windmill-client": "^1"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.5.0",
+        "postcss": "^8.5.10",
+        "tailwindcss": "^4.2.2"
     }
 }

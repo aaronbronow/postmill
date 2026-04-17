@@ -1,17 +1,7 @@
 <svelte:head>
-  <script>
-    window.tailwind = {
-      config: {
-        corePlugins: {
-          preflight: false,
-        }
-      }
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
-<!-- v1.5.0 -->
+<!-- v1.5.2 -->
 <script lang="ts">
   import { backend } from './wmill';
   import { onMount } from 'svelte';
@@ -315,6 +305,12 @@
   }
 </script>
 
+<!-- svelte-ignore event_directive_deprecated -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<!-- svelte-ignore a11y_img_redundant_alt -->
+
 <main class="container">
   <header class="topbar">
     <div class="flex items-center gap-4">
@@ -323,25 +319,28 @@
         <span class="text-xs text-gray-400 italic">{saveStatus}</span>
       {/if}
     </div>
-    <button class="btn btn-secondary btn-sm" on:click={loadDrafts} disabled={isLoadingDrafts}>
+    <button type="button" class="btn btn-secondary btn-sm" on:click={loadDrafts} disabled={isLoadingDrafts}>
       {isLoadingDrafts ? 'Refreshing...' : 'Refresh'}
     </button>
   </header>
 
   <nav class="tabs">
     <button 
+      type="button"
       class="tab-link {activeTab === 'Upload' ? 'active' : ''}" 
       on:click={() => activeTab = 'Upload'}
     >
       Upload
     </button>
     <button 
+      type="button"
       class="tab-link {activeTab === 'Draft' ? 'active' : ''}" 
       on:click={() => activeTab = 'Draft'}
     >
       Draft
     </button>
     <button 
+      type="button"
       class="tab-link {activeTab === 'Post' ? 'active' : ''}" 
       on:click={() => activeTab = 'Post'}
     >
@@ -353,6 +352,8 @@
     {#if activeTab === 'Upload'}
       <div class="upload-area">
         <div 
+          role="region"
+          aria-label="File upload area"
           class="card p-8 border-dashed border-2 text-center transition-colors {isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}"
           on:dragover={handleDragOver}
           on:dragleave={handleDragLeave}
@@ -377,6 +378,7 @@
         
         <div class="mt-4 flex justify-center">
           <button 
+            type="button"
             class="btn btn-primary" 
             on:click={createDraft} 
             disabled={!filesToUpload || isUploading}
@@ -404,12 +406,15 @@
             {:else}
               <ul class="draft-list">
                 {#each drafts as draft}
-                  <li 
-                    class="draft-item {selectedDraft?.id === draft.id ? 'selected' : ''}"
-                    on:click={() => selectDraft(draft)}
-                  >
-                    <div class="text-sm">Draft {new Date(draft.id).toLocaleDateString()}</div>
-                    <div class="text-xs text-gray-400">{new Date(draft.id).toLocaleTimeString()}</div>
+                  <li>
+                    <button 
+                      type="button"
+                      class="draft-item w-full text-left {selectedDraft?.id === draft.id ? 'selected' : ''}"
+                      on:click={() => selectDraft(draft)}
+                    >
+                      <div class="text-sm">Draft {new Date(draft.id).toLocaleDateString()}</div>
+                      <div class="text-xs text-gray-400">{new Date(draft.id).toLocaleTimeString()}</div>
+                    </button>
                   </li>
                 {/each}
               </ul>
@@ -421,6 +426,7 @@
               <div class="flex justify-between items-center mb-6">
                 <h3 class="m-0 font-bold">Draft Details</h3>
                 <button 
+                  type="button"
                   class="btn btn-danger btn-sm" 
                   on:click={deleteDraft}
                   disabled={isDeleting}
@@ -437,7 +443,7 @@
               >
                 {#each selectedDraft.images as img (img.id)}
                   <div class="image-card relative group" animate:flip={{duration: flipDurationMs}}>
-                    <img src={img.url} alt="Draft image" />
+                    <img src={img.url} alt="Draft" />
                     <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity pointer-events-none"></div>
                   </div>
                 {/each}
@@ -480,6 +486,7 @@
           
           <div class="mt-10">
             <button 
+              type="button"
               class="btn btn-primary w-full py-3" 
               disabled={selectedAccounts.length === 0 || !selectedDraft || isPosting}
               on:click={postToAccounts}
@@ -510,7 +517,6 @@
     cursor: not-allowed;
   }
   .m-0 { margin: 0; }
-  .mb-4 { margin-bottom: 1rem; }
   
   .image-grid {
     display: grid;
