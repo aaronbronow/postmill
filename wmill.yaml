@@ -13,9 +13,7 @@ includes:
 # extraIncludes: []
 
 # Glob patterns for files to exclude from sync
-excludes: 
-  - "**/*.test.ts"
-  - "**/*.test.yaml"
+excludes: []
 
 # --- What to sync -----------------------------------------------------
 # "skip" options default to false (synced), "include" options default to false (not synced)

@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "build:css": "../../../node_modules/.bin/tailwindcss -i ./index.css -o ./dist/tailwind.css"
+        "build:css": "../../../node_modules/.bin/tailwindcss -i ./tailwind.css -o ./index.css"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1031.0",

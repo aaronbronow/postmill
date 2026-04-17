@@ -6,7 +6,6 @@ export declare const backend: {
   create_media_content: (args: {}) => Promise<any>;
   get_google_drive_folder_contents: (args: {}) => Promise<any>;
   meta_webhooks: (args: {}) => Promise<any>;
-  post-photos-app-bucket-dev.resource: (args: {}) => Promise<any>;
   google_drive_utils: (args: {}) => Promise<any>;
 };
 
@@ -15,7 +14,6 @@ export declare const backendAsync: {
   create_media_content: (args: {}) => Promise<string>;
   get_google_drive_folder_contents: (args: {}) => Promise<string>;
   meta_webhooks: (args: {}) => Promise<string>;
-  post-photos-app-bucket-dev.resource: (args: {}) => Promise<string>;
   google_drive_utils: (args: {}) => Promise<string>;
 };
 
