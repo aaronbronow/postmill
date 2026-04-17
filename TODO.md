@@ -18,6 +18,7 @@
 - [x] how to set environment variables once (Configured in .env and AGENTS.md)
 - [ ] set app state properties
 - [x] clean up dev UI into a single column
+- [x] fix layout/style flicker by disabling Tailwind Preflight and adding immediate layout utilities to index.css
 - [x] drag images to re-order (Implemented via svelte-dnd-action)
 - [ ] delete the images and start over
 - [ ] json encode description 

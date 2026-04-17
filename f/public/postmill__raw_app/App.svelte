@@ -1,4 +1,13 @@
 <svelte:head>
+  <script>
+    window.tailwind = {
+      config: {
+        corePlugins: {
+          preflight: false,
+        }
+      }
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
